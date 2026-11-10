@@ -2,25 +2,12 @@ use std::error::Error;
 
 mod file;
 mod lexer;
+mod repl;
 mod token;
+mod util;
 fn main() -> Result<(), Box<dyn Error>> {
     println!("Monkey Lang");
-    let filename = file::read_file_name()?;
-    lexer::read_char();
-
-    println!("{}", filename);
-    let input = file::read_file_content(filename)?;
-
-    let mut lexer = lexer::Lexer::new(&input);
-
-    loop {
-        let token = lexer.next_token();
-        println!("{}: {}", token.kind, token.literal);
-
-        if token.kind == token::TokenKind::EOF {
-            break;
-        }
-    }
+    util::check_input();
     //file::print_file_content(file_name.clone());
 
     // 1. Read Monkey source [DONE]
