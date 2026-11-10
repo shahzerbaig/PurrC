@@ -1,0 +1,59 @@
+// calculator.purr — arithmetic with functions and conditionals
+// Demonstrates: fn, return, let, tom, queen, kitten, if/else, operators
+
+// ── Basic operations ─────────────────────────
+
+fn add(a, b) {
+    return a + b;
+}
+
+fn sub(a, b) {
+    return a - b;
+}
+
+fn mul(a, b) {
+    return a * b;
+}
+
+fn div(a, b) {
+    // guard against divide-by-zero
+    if (b == 0) {
+        return hiss; // false = failure
+    } else {
+        return a / b;
+    }
+}
+
+// ── Dispatch ─────────────────────────────────
+// op: 1=add, 2=sub, 3=mul, 4=div
+fn calculate(op, a, b) {
+    if (op == 1) {
+        return add(a, b);
+    } else if (op == 2) {
+        return sub(a, b);
+    } else if (op == 3) {
+        return mul(a, b);
+    } else if (op == 4) {
+        return div(a, b);
+    } else {
+        return hiss; // unknown op
+    }
+}
+
+// ── Entry ────────────────────────────────────
+
+fn main() {
+    queen two = 2;
+    tom three = 3;
+
+    let sum  = calculate(1, two, three); // 5
+    let diff = calculate(2, two, three); // -1
+    let prod = calculate(3, two, three); // 6
+    let quot = calculate(4, 6, three);   // 2
+
+    if (sum == 5) {
+        return purr;
+    } else {
+        return hiss;
+    }
+}

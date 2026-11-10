@@ -6,7 +6,7 @@ mod repl;
 mod token;
 mod util;
 fn main() -> Result<(), Box<dyn Error>> {
-    println!("Monkey Lang");
+    println!("Cat Lang");
     util::check_input();
     //file::print_file_content(file_name.clone());
 

@@ -1,0 +1,8 @@
+// hello.purr — smallest useful PurrC program
+// Demonstrates: fn, return, purr (true)
+
+fn main() {
+    // PurrC has no string/print keyword enabled yet (meow is reserved),
+    // so "hello" is expressed by returning a true/1 result.
+    return purr;
+}

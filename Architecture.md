@@ -2,7 +2,7 @@
 
 ```mermaid
 flowchart TD
-    A["Source Code<br/>(main.monkey)"] --> B["Lexer<br/>lexer.rs"]
+    A["Source Code<br/>(main.purr)"] --> B["Lexer<br/>lexer.rs"]
     B -->|"Token stream"| C["Parser<br/>parser.rs"]
     C -->|"AST (Program)"| D["Compiler<br/>compiler.rs"]
     D -->|"Bytecode<br/>bytecode.rs"| E["Virtual Machine<br/>vm.rs"]
@@ -61,7 +61,7 @@ sequenceDiagram
     participant B as bytecode.rs
     participant V as vm.rs
 
-    U->>F: cargo run main.monkey
+    U->>F: cargo run main.purr
     F->>L: source string
     loop until EOF
         L->>P: Token

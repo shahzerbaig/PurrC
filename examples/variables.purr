@@ -1,0 +1,53 @@
+// variables.purr — bindings, immutability, and scope
+// Demonstrates: let, queen (immutable), tom (mutable), kitten, purr/hiss
+
+// ── Immutable binding ────────────────────────
+queen pi = 3;          // cannot be reassigned
+queen answer = 42;     // classic constant
+
+// ── Mutable binding ──────────────────────────
+tom counter = 0;       // can be reassigned
+tom flag = hiss;       // starts false
+
+// ── Standard binding ─────────────────────────
+let greeting_ok = purr;
+
+// ── Function using bindings ──────────────────
+fn bump(n) {
+    return n + 1;
+}
+
+fn is_answer(n) {
+    if (n == answer) {
+        return purr;
+    } else {
+        return hiss;
+    }
+}
+
+fn main() {
+    // mutate a tom binding
+    counter = bump(counter);   // 1
+    counter = bump(counter);   // 2
+
+    // flip a boolean flag
+    if (counter == 2) {
+        flag = purr;
+    } else {
+        flag = hiss;
+    }
+
+    // use an immutable binding in a check
+    if (is_answer(42) == purr) {
+        return purr;
+    } else {
+        return hiss;
+    }
+}
+
+// ── Notes ────────────────────────────────────
+// • queen  = immutable binding (reassign is a compile error)
+// • tom    = mutable binding
+// • let    = standard binding declaration
+// • kitten = numeric literal token
+// • purr   = true,  hiss = false

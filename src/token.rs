@@ -86,17 +86,44 @@ impl fmt::Display for TokenKind {
 
 pub fn lookup_ident(ident: &str) -> TokenKind {
     match ident {
-        "troop" => TokenKind::Class,
-        "silverback" => TokenKind::Const,
-        "monkey" => TokenKind::Variable,
-        "pup" => TokenKind::Number,
+        // ── Structure ──────────────────────────────
+        "clowder" => TokenKind::Class, // a group of cats = a class
+        // "colony" => TokenKind::Module, // feral cat colony = module/namespace
+        // "litter" => TokenKind::Block,  // a litter = block/scope
+
+        // ── Values & Bindings ──────────────────────
+        "queen" => TokenKind::Const,   // queen = fixed/immutable
+        "tom" => TokenKind::Variable,  // tom = mutable binding
+        "kitten" => TokenKind::Number, // kitten = small literal
+        // "meow" => TokenKind::String,   // meow = vocalization = string
+        "purr" => TokenKind::True,  // purr = contentment = true
+        "hiss" => TokenKind::False, // hiss = displeasure = false
+
+        // ── Declaration ────────────────────────────
         "let" => TokenKind::Let,
         "fn" => TokenKind::Function,
-        "true" => TokenKind::True,
-        "false" => TokenKind::False,
+        // "adopt" => TokenKind::Import, // adopt a cat = import
+        // "groom" => TokenKind::Use,    // grooming = bringing in
+
+        // ── Control Flow ───────────────────────────
         "if" => TokenKind::If,
         "else" => TokenKind::Else,
+        // "pounce" => TokenKind::While,     // repeated pouncing = loop
+        // "stalk" => TokenKind::For,        // stalking = iterate
+        // "swat" => TokenKind::Break,       // swat = knock out of loop
+        // "retract" => TokenKind::Continue, // retract claws = continue
+
+        // ── Functions / Return ─────────────────────
         "return" => TokenKind::Return,
+        // "yowl" => TokenKind::Throw,  // loud yowl = error/throw
+        // "chirp" => TokenKind::Yield, // chirping = yield a value
+
+        // ── Misc ───────────────────────────────────
+        // "knead" => TokenKind::Await,      // kneading = waiting/working
+        // "catnap" => TokenKind::Async,     // short sleep = async
+        // "nine_lives" => TokenKind::Try,   // nine lives = fault tolerance
+        // "territory" => TokenKind::Public, // marked territory = public
+        // "den" => TokenKind::Private,      // hidden den = private
         _ => TokenKind::Ident,
     }
 }

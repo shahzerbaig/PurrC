@@ -1,126 +1,175 @@
-# Monkey Lang
+# PurrC 🐈
 
-A Monkey programming language implementation written in Rust.
+**A small, cat-themed programming language implemented in Rust.**
 
-## Installation
+PurrC is a bytecode-compiled language with a hand-written lexer, Pratt parser, tree-walking compiler, and a stack-based virtual machine. The syntax is C-family (`let`, `fn`, `if`, `else`, `return`), but the language's identity is feline — values, literals, and (in future) control-flow keywords are named after real cat vocalizations and behaviors.
+
+> **Status:** early / minimal. Only the essential feature set is enabled. Many themed keywords are commented out in `token.rs` and reserved for later.
+
+---
+
+## Quick Start
+
+**Install (once published):**
 
 ```bash
-cargo install monkeyc
+cargo install purrc
 ```
 
-```mermaid
-flowchart TD
-    A["Source Code<br/>(main.monkey)"] --> B["Lexer<br/>lexer.rs"]
-    B -->|"Token stream"| C["Parser<br/>parser.rs"]
-    C -->|"AST (Program)"| D["Compiler<br/>compiler.rs"]
-    D -->|"Bytecode<br/>bytecode.rs"| E["Virtual Machine<br/>vm.rs"]
-    E -->|"Result"| F["Output"]
+**Run a file:**
 
-    G["Token definitions<br/>token.rs"] -.-> B
-    G -.-> C
-    H["REPL<br/>repl.rs"] --> B
-    I["File loader<br/>file.rs"] --> B
-
-    style A fill:#00000F
-    style F fill:#d4edda
-    style E fill:#1113cd
-    style D fill:#f8d7da
-    style C fill:#e2d5f1
-    style B fill:#d1ecf1
+```bash
+purrc run main.purr
 ```
 
-# Stage-By-Stage Details
+**REPL:**
 
-```mermaid
-flowchart LR
-    subgraph Frontend["Frontend (Interpretation-ish)"]
-        direction TB
-        SRC["Raw text<br/>input source"]
-        LEX["Lexer<br/>─────────<br/>• read_char()<br/>• next_token()<br/>• skip_whitespace()"]
-        TOK["Tokens<br/>IDENT, INT, PLUS,<br/>LET, FN, IF, ..."]
-        PAR["Parser<br/>─────────<br/>• parse_program()<br/>• Pratt parsing<br/>• precedence"]
-        AST["AST<br/>Program → Statements<br/>LetStmt, ExprStmt,<br/>InfixExpr, ..."]
-
-        SRC --> LEX --> TOK --> PAR --> AST
-    end
-
-    subgraph Backend["Backend (Compilation)"]
-        direction TB
-        COMP["Compiler<br/>─────────<br/>• walk AST<br/>• emit(opcode)<br/>• symbol table<br/>• scope tracking"]
-        BC["Bytecode<br/>─────────<br/>Instructions<br/>Constants pool<br/>+ OpAdd, OpCall,<br/>OpGetGlobal, ..."]
-        VM["VM<br/>─────────<br/>• fetch-decode-execute<br/>• stack machine<br/>• call frames"]
-
-        COMP --> BC --> VM
-    end
-
-    AST --> COMP
-    VM --> OUT["Result / Output"]
+```bash
+purrc repl
 ```
 
-# Data Flow (Objects Passed Between Stages)
+Source files use the **`.purr`** extension.
 
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant F as file.rs
-    participant L as lexer.rs
-    participant P as parser.rs
-    participant C as compiler.rs
-    participant B as bytecode.rs
-    participant V as vm.rs
+---
 
-    U->>F: cargo run main.monkey
-    F->>L: source string
-    loop until EOF
-        L->>P: Token
-    end
-    P->>C: AST (Program)
-    C->>B: emit(OpConstant, ...)
-    C->>C: emit(OpAdd, ...)
-    C->>B: Instructions
-    B->>V: Bytecode (instructions + constants)
-    V->>V: fetch → decode → execute
-    V-->>U: println! result
+## Hello, World
 
+```purr
+fn main() {
+    return kitten; // kitten = numeric literal
+}
 ```
 
-# Module Map
+> `kitten` is the numeric literal token. `queen` is an immutable binding, `tom` is a mutable binding, `purr` is `true`, and `hiss` is `false`.
 
-```mermaid
-graph TD
-    MAIN["main.rs<br/>(entry point)"]
+---
 
-    MAIN --> FILE["file.rs<br/>read source file"]
-    MAIN --> REPL["repl.rs<br/>interactive mode"]
+## The Enabled Keyword Set
 
-    FILE --> LEX["lexer.rs"]
-    REPL --> LEX
+Only these tokens are active right now. Everything else falls through to `TokenKind::Ident`.
 
-    LEX --> TOKEN["token.rs<br/>token types"]
-    LEX --> PARSER["parser.rs"]
+| Keyword         | TokenKind  | Meaning / Rationale                       |
+| --------------- | ---------- | ----------------------------------------- |
+| `clowder`       | `Class`    | a group of cats = a class                 |
+| `queen`         | `Const`    | a breeding female = fixed/immutable value |
+| `tom`           | `Variable` | a male cat = mutable binding              |
+| `kitten`        | `Number`   | a young cat = small numeric literal       |
+| `purr`          | `True`     | the contentment sound = true              |
+| `hiss`          | `False`    | the defensive sound = false               |
+| `let`           | `Let`      | standard binding declaration              |
+| `fn`            | `Function` | function declaration                      |
+| `if`            | `If`       | conditional                               |
+| `else`          | `Else`     | else branch                               |
+| `return`        | `Return`   | return from function                      |
+| _anything else_ | `Ident`    | identifier fallback                       |
 
-    PARSER --> ASTNODE["AST nodes<br/>(in parser.rs)"]
-    PARSER --> COMPILER["compiler.rs"]
+### Reserved (commented out, not yet wired up)
 
-    COMPILER --> BYTECODE["bytecode.rs<br/>opcodes + Instructions"]
-    COMPILER --> VM["vm.rs"]
+These are sketched in the lexer but **not active**. Treat them as a roadmap, not a spec:
 
-    VM --> OUT["Output"]
+- **Structure:** `colony` (module), `litter` (block)
+- **Values:** `meow` (string)
+- **Declarations:** `adopt` (import), `groom` (use)
+- **Control flow:** `pounce` (while), `stalk` (for), `swat` (break), `retract` (continue)
+- **Functions/effects:** `yowl` (throw), `chirp` (yield)
+- **Misc:** `knead` (await), `catnap` (async), `nine_lives` (try), `territory` (public), `den` (private)
 
-    style MAIN fill:#111111
-    style VM fill:#bbbbbb
-    style OUT fill:#111111
+---
+
+## Architecture
+
+PurrC is a classic four-stage pipeline:
+
+```
+Source (.purr)
+   │
+   ▼
+Lexer (lexer.rs) ──► Token stream
+   │
+   ▼
+Parser (parser.rs) ──► AST (Program)
+   │
+   ▼
+Compiler (compiler.rs) ──► Bytecode (Instructions + constants pool)
+   │
+   ▼
+VM (vm.rs) ──► Result / Output
 ```
 
-# Instruction Cycle (VM Internals)
+Supporting modules:
 
-```mermaid
+| File          | Role                                                                                    |
+| ------------- | --------------------------------------------------------------------------------------- |
+| `main.rs`     | entry point; dispatches to file mode or REPL                                            |
+| `file.rs`     | reads source files                                                                      |
+| `repl.rs`     | interactive mode; feeds lines into the lexer                                            |
+| `token.rs`    | token definitions (`TokenKind`) and keyword lookup                                      |
+| `lexer.rs`    | `read_char`, `next_token`, `skip_whitespace`                                            |
+| `parser.rs`   | Pratt parser; produces `Program` → `Statements` (`LetStmt`, `ExprStmt`, `InfixExpr`, …) |
+| `compiler.rs` | walks the AST, emits opcodes, tracks symbols and scopes                                 |
+| `bytecode.rs` | `Instructions`, `OpAdd`, `OpCall`, `OpGetGlobal`, `OpConstant`, `OpHalt`, …             |
+| `vm.rs`       | stack machine; fetch → decode → execute; call frames                                    |
 
-stateDiagram-v2
-    [*] --> Fetch
-    Fetch --> Decode: read instruction at ip
-    Decode --> Execute: match opcode
-    Execute --> Fetch: advance ip
-    Execute --> Halt: OpHalt / end of code
-    Halt --> [*]
+### Instruction cycle
+
 ```
+Fetch ──► Decode ──► Execute ──► Fetch ──► … ──► Halt
+```
+
+The VM is a stack machine driven by an instruction pointer (`ip`), with a constants pool and call frames.
+
+### Data flow
+
+1. `file.rs` reads `.purr` source into a `String`.
+2. `lexer.rs` yields `Token`s until EOF.
+3. `parser.rs` builds a `Program` AST.
+4. `compiler.rs` emits instructions and constants into `bytecode.rs`.
+5. `vm.rs` executes the bytecode and returns a result.
+
+---
+
+## Project Layout
+
+```
+purrc/
+├── src/
+│   ├── main.rs        # entry point
+│   ├── file.rs        # source loader
+│   ├── repl.rs        # interactive shell
+│   ├── token.rs       # TokenKind + keyword table
+│   ├── lexer.rs       # tokenizer
+│   ├── parser.rs      # Pratt parser + AST nodes
+│   ├── compiler.rs    # AST → bytecode
+│   ├── bytecode.rs    # opcodes + Instruction
+│   └── vm.rs          # virtual machine
+├── examples/
+│   └── main.purr
+└── Cargo.toml
+```
+
+---
+
+## Design Notes for Contributors
+
+- **Keyword table lives in `token.rs`.** To enable a reserved keyword, uncomment its match arm and add the corresponding `TokenKind` variant. Keep the theme consistent: _vocalizations → values/effects_, _behaviors → control flow_, _social/territorial → structure/visibility_.
+- **File extension is `.purr`**, not `.cat`. `.cat` collides with Windows Security Catalogs and CATIA; `.purr` matches the language name.
+- **Keep the enabled surface minimal.** The "few necessary features" principle: don't enable a keyword until the compiler and VM fully support it end-to-end. A reserved-but-commented keyword is better than a half-implemented one.
+- **Lexer is the single source of truth** for keywords. Parser and compiler should never hard-code keyword strings.
+- **Errors should stay in-theme** (e.g. `hiss: expected kitten, found meow`) but remain _actionable_ — include line/column and what was expected.
+
+---
+
+## Roadmap
+
+- [ ] Enable `meow` (string literal) with proper escaping
+- [ ] `pounce` / `stalk` loops + `swat` / `retract` loop control
+- [ ] `yowl` (throw) and `nine_lives` (try) error handling
+- [ ] `colony` modules and `adopt` imports
+- [ ] `catnap` / `knead` async primitives
+- [ ] Formatter (`groom`), test runner (`pounce`), package manager (`purrm`)
+
+---
+
+## License
+
+TBD.
